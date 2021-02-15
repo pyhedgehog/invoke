@@ -2,6 +2,64 @@
 Changelog
 =========
 
+- :release:`1.5.0 <2020-12-30>`
+- :feature:`454` (also :issue:`577`/:issue:`658`, via
+  :issue:`583`/:issue:`681`/:issue:`607`) Allow any string-compatible object to
+  be passed to `Context.cd <invoke.context.Context.cd>`, enabling use of eg
+  ``pathlib.Path`` instances. Thanks to Jimm Domingo for the original report
+  and Ludovico Bianchi, Mario César, and Floris Lambrechts for patches.
+- :bug:`409 major` (via :issue:`611`/:issue:`580`) Don't silently discard help
+  text for task arguments whose names happen to contain underscores. Reported
+  by ``@iago1460``, original patches by Hayden Flinner and Floris Lambrechts.
+- :bug:`398 major` (via :issue:`611`/:issue:`580`) Don't silently ignore task
+  help specifiers which don't actually map to the decorated task's arguments
+  (eg ``@task(help={"foo": "help for foo"})`` wrapping a task without a ``foo``
+  argument). Reported by Sohaib Farooqi, with original patches by Hayden
+  Flinner and Floris Lambrechts.
+- :feature:`197` Allow subcollections to act as the default 'tasks' of their
+  parent collections (via the new ``default`` kwarg to
+  `~invoke.collection.Collection.add_collection`). This means that nontrivial
+  task trees can specify eg "use my test subcollection's default task as the
+  global default task" and similar. Thanks to Tye Wang for the request and
+  initial patch.
+- :support:`-` Enhanced test coverage in a handful of modules whose coverage
+  was under 90%.
+- :feature:`-` `~invoke.context.MockContext` now populates its
+  ``NotImplementedError`` exception instances (typically raised when a command
+  is executed which had no pre-prepared result) with the command string that
+  triggered them; this makes it much easier to tell what exactly in a test
+  caused the error.
+- :feature:`-` `~invoke.context.MockContext` now accepts a few quality-of-life
+  shortcuts as keys and values in its ``run``/``sudo`` arguments:
+
+    - Keys may be compiled regular expression objects, as well as strings, and
+      will match any calls whose commands match the regex.
+    - Values may be ``True`` or ``False`` as shorthand for otherwise empty
+      `~invoke.runners.Result` objects with exit codes of ``0`` or ``1``
+      respectively.
+    - Values may also be strings, as shorthand for otherwise empty
+      `~invoke.runners.Result` objects with those strings given as the
+      ``stdout`` argument.
+
+- :feature:`441` Add a new ``repeat`` kwarg to `~invoke.context.MockContext`
+  which, when True (default: False) causes stored results for its methods to be
+  yielded repeatedly instead of consumed. Feature request courtesy of
+  ``@SwampFalc``.
+- :bug:`- major` Immutable iterable result values handed to
+  `~invoke.context.MockContext` would yield errors (due to the use of
+  ``pop()``). The offending logic has been retooled to be more iterator-focused
+  and now works for tuples and etc.
+- :support:`-` Update the :ref:`testing documentation <testing-user-code>` a
+  bit: cleaned up existing examples and added new sections for the other
+  updates in the 1.5 release.
+- :feature:`700` Automatically populate the ``command`` attribute of
+  `~invoke.runners.Result` objects returned by `~invoke.context.MockContext`
+  methods, with the command string triggering that result. Previously users had
+  to do this by hand or otherwise suffered inaccurate result objects. Thanks to
+  ``@SwampFalc`` for the report & initial patch.
+- :feature:`-` Upgrade `~invoke.context.MockContext` to wrap its methods in
+  ``Mock`` objects if the ``(unittest.)mock`` library is importable. This makes
+  testing Invoke-using codebases even easier.
 - :release:`1.4.1 <2020-01-29>`
 - :release:`1.3.1 <2020-01-29>`
 - :support:`586 backported` Explicitly strip out ``__pycache__`` (and for good
